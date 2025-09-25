@@ -1,0 +1,57 @@
+Bootstrap: docker
+From: nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04
+
+%labels
+    Author glgenn
+    Description GLGENN training container with PyTorch, Lightning, CUDA
+
+%environment
+    export LC_ALL=C.UTF-8
+    export LANG=C.UTF-8
+    export PYTHONUNBUFFERED=1
+    export PIP_NO_CACHE_DIR=1
+    export OMP_NUM_THREADS=1
+    export MKL_NUM_THREADS=1
+    export PYTHONDONTWRITEBYTECODE=1
+    export TORCH_CUDA_ARCH_LIST="All"
+
+%post
+    set -e
+    apt-get update && apt-get install -y --no-install-recommends \
+        python3 python3-pip python3-venv python3-dev \
+        git ca-certificates build-essential \
+        libglib2.0-0 libsm6 libxrender1 libxext6 \
+        wget curl && \
+        rm -rf /var/lib/apt/lists/*
+
+    python3 -m pip install --upgrade pip setuptools wheel
+
+    mkdir -p /opt/app
+    
+    # Copy requirements first to leverage layer caching on remote builders
+    # They will be overridden at runtime with bind-mounts for live code
+    # Install CUDA-enabled PyTorch matching CUDA 12.1 in the base image
+    pip install --index-url https://download.pytorch.org/whl/cu121 torch
+
+    # Core project dependencies
+    pip install lightning scikit-learn tensorboard h5py
+    # Optional utilities
+    pip install numpy pandas
+
+%files
+    . /workspace
+
+%runscript
+    # Default entrypoint: run training
+    # Example usage inside container:
+    #   singularity run --nv glgenn.sif python glgenn/train.py --help
+    exec python3 /workspace/train.py "$@"
+
+%help
+    GLGENN Singularity image
+    - CUDA runtime from NVIDIA
+    - Python packages from requirements.txt
+    Usage examples:
+      singularity exec --nv glgenn.sif python3 /workspace/train.py --help
+      singularity run --nv glgenn.sif --dataset top_tagging --model lorentz_cggnn --dataroot datasets --batch_size 4
+

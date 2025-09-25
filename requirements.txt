@@ -1,0 +1,7 @@
+torch 
+lightning
+scikit-learn
+tensorboard
+h5py
+pandas
+matplotlib
