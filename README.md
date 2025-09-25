@@ -8,7 +8,7 @@
 We introduce a new parameter-efficient method for constructing pseudo-orthogonal-groups-equivariant neural networks based on geometric (Clifford) algebras. The approach is based on finding and considering larger groups than the Clifford groups in geometric algebras, which perform the same action as pseudo-orthogonal groups. By constructing networks equivariant to these larger groups, we automatically guarantee their equivariance to the corresponding pseudo-orthogonal group. This approach induces an expressiveness-efficiency trade-off: a larger equivariance group leads to stricter constraints on equivariant layers and thus fewer required optimizable parameters (weights). We propose and study specific groups for this framework, derive new equivariant mappings, and present several model configurations with varying levels of expressiveness and efficiency. Our models demonstrate strong performance on benchmark tasks including convex hull volume estimation, $N$-body dynamics prediction, and high-energy jet tagging.
 
 
-<img src="method.png" width="700">
+<img src="method.png" width="1000">
 
 ## Overview
 This repository contains implementation of general framework for geometric algebra-based layers:
@@ -25,7 +25,6 @@ For each layer, there are modifications equivariant with respect to the groups $
   ```bash
   pip install -r requirements.txt
   ```
-- Recommended: launch experiments from the project root (`/home/kalexu97/Projects/glgenn`).
 
 ## Datasets
 - Convex Hull (synthetic, generated locally):
